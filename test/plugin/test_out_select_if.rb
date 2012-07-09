@@ -45,7 +45,7 @@ class SelectIfOutputTest < Test::Unit::TestCase
 
   def test_match_record
     tag = 'test.tag1' #not match
-    time = Time.local(2012, 10, 10, 10, 10, 0) #not match
+    time = Time.local(2012, 10, 10, 10, 10, 10) #not match
     record = {'code' => '200'} #match
 
     d1 = create_driver(CONFIG, tag)
@@ -58,8 +58,8 @@ class SelectIfOutputTest < Test::Unit::TestCase
   end
 
   def test_not_match
-    tag = 'test.tag1'
-    time = Time.now
+    tag = 'test.tag1' #not match
+    time = Time.local(2012, 10, 10, 10, 10, 10) #not match
     record = {'code' => '300'} #not match
 
     d1 = create_driver(CONFIG, tag)
