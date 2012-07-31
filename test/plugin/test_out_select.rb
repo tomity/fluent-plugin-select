@@ -1,17 +1,17 @@
 require 'helper'
 
-class SelectIfOutputTest < Test::Unit::TestCase
+class SelectOutputTest < Test::Unit::TestCase
   def setup
     Fluent::Test.setup
   end
 
   CONFIG = %[
-    select_if tag == "tag" or record["code"] == "200" or Time.at(time).sec == 0
+    select tag == "tag" or record["code"] == "200" or Time.at(time).sec == 0
     add_prefix prefix
   ]
 
   def create_driver(conf = CONFIG, tag='test.input')
-    Fluent::Test::OutputTestDriver.new(Fluent::SelectIfOutput, tag).configure(conf)
+    Fluent::Test::OutputTestDriver.new(Fluent::SelectOutput, tag).configure(conf)
   end
 
   def test_match_tag
@@ -77,7 +77,7 @@ class SelectIfOutputTest < Test::Unit::TestCase
 
     #select_if is syntax error
     syntax_error_config = %[
-      select_if tag.
+      select tag.
       add_prefix prefix
     ]
     d1 = create_driver(syntax_error_config, tag)

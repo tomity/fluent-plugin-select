@@ -1,6 +1,8 @@
-# fluent-plugin-select-if
+fluent-plugin-select-if rename to fluent-plugin-select
 
-fluent-plugin-select-if(out\_select\_if) is the non-buffered output plugin that can filter event logs by using ruby script.
+# fluent-plugin-select
+
+fluent-plugin-select(out\_select) is the non-buffered output plugin that can filter event logs by using ruby script.
 
 ## Example
 
@@ -13,7 +15,7 @@ This sample config outputs access logs that have status code 200.
       tag tag
     </source>
     <match tag>
-      type select_if
+      type select
       select_if record["code"] == "200"
       add_prefix filtered
     </match>
@@ -23,4 +25,4 @@ This sample config outputs access logs that have status code 200.
     </match>
 
 
-The parameter "select\_if" can use 3 variables in event log; tag, time, record. The format of time is an integer number of seconds since the Epoch. The format of record is hash.
+The parameter "select" can use 3 variables in event log; tag, time, record. The format of time is an integer number of seconds since the Epoch. The format of record is hash.

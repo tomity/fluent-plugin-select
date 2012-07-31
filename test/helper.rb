@@ -22,4 +22,4 @@ unless ENV.has_key?('VERBOSE')
   $log = nulllogger
 end
 
-require "fluent/plugin/out_select_if"
+require "fluent/plugin/out_select"

@@ -1,9 +1,9 @@
 
 module Fluent
-  class SelectIfOutput < Fluent::Output
-    Fluent::Plugin.register_output('select_if', self)
+  class SelectOutput < Fluent::Output
+    Fluent::Plugin.register_output('select', self)
 
-    config_param :select_if, :string
+    config_param :select, :string
     config_param :add_prefix, :string
     config_param :timeout, :integer, :default => 1
 
@@ -11,7 +11,7 @@ module Fluent
       begin
         time_records = []
         es.each {|time, record|
-          if eval(@select_if)
+          if eval(@select)
             $log.trace {"hoge"}
             time_records << [time, record]
           else
@@ -25,7 +25,7 @@ module Fluent
         time_records #for test
       rescue SyntaxError => e
         chain.next
-        $log.error "Select_if command is syntax error: #{@select_if}"
+        $log.error "Select command is syntax error: #{@select}"
         e #for test
       end
     end
