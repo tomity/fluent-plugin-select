@@ -3,14 +3,14 @@ $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "fluent-plugin-select"
-  s.version     = "0.0.2"
+  s.version     = "0.0.3"
   s.authors     = ["Kohei Tomita"]
   s.email       = ["tommy.fmale@gmail.com"]
   s.homepage    = "https://github.com/tomity/fluent-plugin-select"
   s.summary     = %q{fluent-plugin-select is the non-buffered plugin that can be filtered by ruby script. }
   s.description = %q{fluent-plugin-select is the non-buffered plugin that can be filtered by ruby script. }
 
-  s.rubyforge_project = "fluent-plugin-select-if"
+  s.rubyforge_project = "fluent-plugin-select"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
