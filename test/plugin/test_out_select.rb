@@ -86,4 +86,33 @@ class SelectOutputTest < Test::Unit::TestCase
     e =  d1.instance.emit(tag, es, chain)
     assert e.kind_of?(SyntaxError)
   end
+
+  def test_match_tag_using_tag_param
+    tag = 'tag' #match
+    time = Time.local(2012, 10, 10, 10, 10, 10) #not match
+    record = {'code' => '300'} #not match
+
+    d1 = create_driver %[
+    select tag == "tag" or record["code"] == "200" or Time.at(time).sec == 0
+    tag prefix.tag
+    ], tag
+    d1.run do
+      d1.emit(record, time)
+    end
+    emits = d1.emits
+    assert_equal 1, emits.length
+    assert_equal ["prefix.#{tag}", time.to_i, record], emits[0]
+  end
+
+  def test_config_error
+    tag = 'tag' #match
+    time = Time.local(2012, 10, 10, 10, 10, 10) #not match
+    record = {'code' => '300'} #not match
+
+    assert_raise(Fluent::ConfigError){
+      create_driver %[
+        select tag == "tag" or record["code"] == "200" or Time.at(time).sec == 0
+      ], tag
+    }
+  end
 end
