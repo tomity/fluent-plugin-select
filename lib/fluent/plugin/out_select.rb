@@ -21,20 +21,7 @@ module Fluent
 
     def emit(tag, es, chain)
       begin
-        output_es = MultiEventStream.new
-        es.each {|time, record|
-          begin
-            Timeout.timeout(@timeout){
-              if eval(@select)
-                output_es.add(time, record)
-              else
-                $log.trace {"filtered: #{Time.at(time)} #{tag} #{record.inspect}"}
-              end
-            }
-          rescue Timeout::Error
-            $log.error {"Timeout: #{Time.at(time)} #{tag} #{record.inspect}"}
-          end
-        }
+        output_es = do_select(tag, es)
         if @mode == "add_prefix"
           Fluent::Engine::emit_stream(@add_prefix + "." + tag, output_es)
         else
@@ -46,6 +33,30 @@ module Fluent
         chain.next
         $log.error "Select command is syntax error: #{@select}"
         e #for test
+      end
+    end
+
+    def do_select(tag, es)
+      output_es = MultiEventStream.new
+      es.each {|time, record|
+        timeout_block{
+          if eval(@select)
+            output_es.add(time, record)
+          else
+            $log.trace {"filtered: #{Time.at(time)} #{tag} #{record.inspect}"}
+          end
+        }
+      }
+      output_es
+    end
+
+    def timeout_block
+      begin
+        Timeout.timeout(@timeout){
+          yield
+        }
+      rescue Timeout::Error
+        $log.error {"Timeout: #{Time.at(time)} #{tag} #{record.inspect}"}
       end
     end
   end
