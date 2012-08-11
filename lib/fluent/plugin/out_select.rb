@@ -39,7 +39,7 @@ module Fluent
     def do_select(tag, es)
       output_es = MultiEventStream.new
       es.each {|time, record|
-        timeout_block{
+        timeout_block(tag, time, record){
           if eval(@select)
             output_es.add(time, record)
           else
@@ -50,7 +50,7 @@ module Fluent
       output_es
     end
 
-    def timeout_block
+    def timeout_block(tag, time, record)
       begin
         Timeout.timeout(@timeout){
           yield
