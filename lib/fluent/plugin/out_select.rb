@@ -21,12 +21,12 @@ module Fluent
 
     def emit(tag, es, chain)
       begin
-        time_records = []
+        output_es = MultiEventStream.new
         es.each {|time, record|
           begin
             Timeout.timeout(@timeout){
               if eval(@select)
-                time_records << [time, record]
+                output_es.add(time, record)
               else
                 $log.trace {"filtered: #{Time.at(time)} #{tag} #{record.inspect}"}
               end
@@ -35,15 +35,13 @@ module Fluent
             $log.error {"Timeout: #{Time.at(time)} #{tag} #{record.inspect}"}
           end
         }
-        time_records.each do |time, record|
-          if @mode == "add_prefix"
-            Fluent::Engine::emit(@add_prefix + "." + tag, time, record)
-          else
-            Fluent::Engine::emit(@tag, time, record)
-          end
+        if @mode == "add_prefix"
+          Fluent::Engine::emit_stream(@add_prefix + "." + tag, output_es)
+        else
+          Fluent::Engine::emit_stream(@tag, output_es)
         end
         chain.next
-        time_records #for test
+        output_es #for test
       rescue SyntaxError => e
         chain.next
         $log.error "Select command is syntax error: #{@select}"

@@ -66,8 +66,8 @@ class SelectOutputTest < Test::Unit::TestCase
     d1.run do
       d1.emit(record, time)
     end
-    emits = d1.emits
-    assert_equal 0, emits.length
+    es = d1.emits
+    assert_equal 0, es.length
   end
 
   def test_syntax_error
