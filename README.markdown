@@ -16,8 +16,9 @@ This sample config outputs access logs that have status code 200.
     </source>
     <match tag>
       type select
-      select_if record["code"] == "200"
+      select record["code"] == "200"
       add_prefix filtered
+      timeout 1s
     </match>
     <match filtered.tag>
       type file
@@ -26,3 +27,20 @@ This sample config outputs access logs that have status code 200.
 
 
 The parameter "select" can use 3 variables in event log; tag, time, record. The format of time is an integer number of seconds since the Epoch. The format of record is hash.
+
+
+tag is alternative for add\_prefix. The 2 following match directives are same:
+
+    <match tag>
+      type select
+      select record["code"] == "200"
+      add_prefix filtered
+      timeout 1s
+    </match>
+    <match tag>
+      type select
+      select record["code"] == "200"
+      tag filtered.tag
+      timeout 1s
+    </match>
+
