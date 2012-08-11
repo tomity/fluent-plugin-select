@@ -6,7 +6,7 @@ module Fluent
     config_param :select, :string
     config_param :add_prefix, :string, :default => nil
     config_param :tag, :string, :default => nil
-    config_param :timeout, :integer, :default => 1
+    config_param :timeout, :time, :default => 1
 
     def configure(conf)
       super
@@ -23,10 +23,16 @@ module Fluent
       begin
         time_records = []
         es.each {|time, record|
-          if eval(@select)
-            time_records << [time, record]
-          else
-            $log.trace {"filtered: #{Time.at(time)} #{tag} #{record.inspect}"}
+          begin
+            Timeout.timeout(@timeout){
+              if eval(@select)
+                time_records << [time, record]
+              else
+                $log.trace {"filtered: #{Time.at(time)} #{tag} #{record.inspect}"}
+              end
+            }
+          rescue Timeout::Error
+            $log.error {"Timeout: #{Time.at(time)} #{tag} #{record.inspect}"}
           end
         }
         time_records.each do |time, record|

@@ -115,4 +115,20 @@ class SelectOutputTest < Test::Unit::TestCase
       ], tag
     }
   end
+
+  def test_timeout
+    tag = 'tag' #match
+    time = Time.local(2012, 10, 10, 10, 10, 10) #not match
+    record = {'code' => '300'} #not match
+
+    d1 = create_driver  %[
+      select sleep 10
+      add_prefix prefix
+    ], tag
+    d1.run do
+      d1.emit(record, time)
+    end
+    emits = d1.emits
+    assert_equal 0, emits.length
+  end
 end
