@@ -12,7 +12,6 @@ module Fluent
         time_records = []
         es.each {|time, record|
           if eval(@select)
-            $log.trace {"hoge"}
             time_records << [time, record]
           else
             $log.trace {"filtered: #{Time.at(time)} #{tag} #{record.inspect}"}
